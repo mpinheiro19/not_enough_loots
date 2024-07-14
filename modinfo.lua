@@ -3,6 +3,9 @@ description = "Scale rare boss item loot"
 author = "Wasp"
 version = "0.1.0"
 
+icon_atlas = "modicon.xml"
+icon = "modicon.tex"
+
 api_version = 10
 dst_compatible = true
 all_clients_require_mod = true
