@@ -1,28 +1,21 @@
 local modded_amount = GetModConfigData("ExtraDrop")
-
---[[
-  todo: 
-    - Skipar caso seja default
-    - definir table de mobs >>> loot prime
-    - null checker da loot table de cada mob
-    - AddChanceLoot por iteracao
-    - AddChanceLoot por qtd de player perto
-    - idea: random pra cada qtd adicionada
-]]
+-- Para debugging
+local numPlayers = modded_amount
 
 local function AddExtraLoot(inst)
   if inst.components.lootdropper ~= nil then
-    for _ = 1, modded_amount do
-      inst.components.lootdropper:AddChanceLoot("deerclops_eyeball", 1) -- todo: generalized approach next
-    end
+    inst.components.lootdropper:AddChanceLoot("deerclops_eyeball", 1) -- todo: generalized approach next
   end
 end
 
--- for _ = 1, modded_amount do
--- for k,v in pairs(modcreature) do
-AddPrefabPostInit("deerclops", AddExtraLoot)
--- end
---end
+local function SetupLootFn(inst)
+  -- Checa pelos players proximos e adiciona o loot, usando AddChanceLoot por exemplo.
 
--- DiogoW comment: (thx LeonidasIV)
--- One can utilize lootsetupfn in scripts/lootdroper.lua file for on event loot changing
+  -- TODO: Calcular dinamicamente numPlayers no momento de setar o Loot
+  -- TODO: Checa se Deerclops morreu antes de adicionar o loot
+  for _ = 1, numPlayers do
+    AddExtraLoot(inst)
+  end
+end
+
+AddPrefabPostInit("deerclops", SetupLootFn)
