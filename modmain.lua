@@ -21,20 +21,33 @@ local function AddExtraLoot(inst)
   end
 end
 
+local function SetupLootFn(lootdropper)
+  -- return a local instance of lootdropper (necessary for dynamic loot allocation)
+  local inst = lootdropper.inst
+
+  -- Calculate number of player nearby mob`s death position
+  local num_player = GetNumberOfNearbyPLayers(inst)
+
+  if num_player > 1 then
+
+    -- if num_player = 1 then normal loot in applied
+    for _ = 1, (num_player-1) do
+      -- adding extra rare loot for the players around
+        AddExtraLoot(inst)
+    end
+
+  end
+
+end
+
 local function AddMobCustomLoot(inst)
 
   if GLOBAL.TheWorld.ismastersim then
 
-    local num_player = GetNumberOfNearbyPLayers(inst)
+    inst.components.lootdropper:SetLootSetupFn(SetupLootFn)
 
-    if num_player > 1 then
-      -- if num_player = 1 then normal loot in applied
-      for _ = 1, (num_player-1) do
-        -- adding extra rare loot for the players around
-          AddExtraLoot(inst)
-      end
-    end
   end
+
 end
 
 AddPrefabPostInit("deerclops", AddMobCustomLoot)
