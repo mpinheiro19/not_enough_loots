@@ -1,21 +1,33 @@
-local modded_amount = GetModConfigData("ExtraDrop")
--- Para debugging
-local numPlayers = modded_amount
+local modded  = GetModConfigData("ExtraDrop")
+local player_tag = {"player"}
+
+local function SetLootSetupFn(lootdropper)
+  local inst = lootdropper.inst
+end
 
 local function AddExtraLoot(inst)
   if inst.components.lootdropper ~= nil then
-    inst.components.lootdropper:AddChanceLoot("deerclops_eyeball", 1) -- todo: generalized approach next
+    -- todo: generalized approach next
+    inst.components.lootdropper:AddChanceLoot("deerclops_eyeball", 1)
   end
 end
 
-local function SetupLootFn(inst)
-  -- Checa pelos players proximos e adiciona o loot, usando AddChanceLoot por exemplo.
+local function AddMobCustomLoot(inst)
 
-  -- TODO: Calcular dinamicamente numPlayers no momento de setar o Loot
-  -- TODO: Checa se Deerclops morreu antes de adicionar o loot
-  for _ = 1, numPlayers do
-    AddExtraLoot(inst)
+  if GLOBAL.TheWorld.ismastersim then
+
+    local x,y,z = inst.Transform:GetWorldPosition()
+    -- shoutout to DiogoW for helping me to figure this out
+    local num_player = GLOBAL.TheSim:CountEntities(x,y,z, 30, player_tag)
+
+    if num_player > 1 then
+      -- if num_player = 1 then normal loot in applied
+      for _ = 1, (num_player-1) do
+        -- adding extra rare loot for the players around
+          AddExtraLoot(inst)
+      end
+    end
   end
 end
 
-AddPrefabPostInit("deerclops", SetupLootFn)
+AddPrefabPostInit("deerclops", AddMobCustomLoot)
