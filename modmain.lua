@@ -1,18 +1,15 @@
 local modded  = GetModConfigData("ExtraDrop")
 local player_tag = {"player"}
 
--- TODO: Entender como usar essa funcao para calcular corretamenta o numero de players
-local function SetLootSetupFn(lootdropper)
-  local inst = lootdropper.inst
-end
 
 local function GetNumberOfNearbyPLayers(inst)
   local x,y,z = inst.Transform:GetWorldPosition()
   -- shoutout to DiogoW for helping me to figure this out
-  local num_player = GLOBAL.TheSim:CountEntities(x,y,z, 50, player_tag)
+  local num_player = GLOBAL.TheSim:CountEntities(x,y,z, 25, player_tag)
 
   return num_player
 end
+
 
 local function AddExtraLoot(inst)
   if inst.components.lootdropper ~= nil then
@@ -21,8 +18,9 @@ local function AddExtraLoot(inst)
   end
 end
 
+
 local function SetupLootFn(lootdropper)
-  -- return a local instance of lootdropper (necessary for dynamic loot allocation)
+  -- return a local instance of lootdropper, necessary for dynamic loot allocation (thx DiogoW)
   local inst = lootdropper.inst
 
   -- Calculate number of player nearby mob`s death position
@@ -40,10 +38,11 @@ local function SetupLootFn(lootdropper)
 
 end
 
+
 local function AddMobCustomLoot(inst)
 
   if GLOBAL.TheWorld.ismastersim then
-
+    -- Take a look into components.lootdropper.GenerateLoot() method
     inst.components.lootdropper:SetLootSetupFn(SetupLootFn)
 
   end
